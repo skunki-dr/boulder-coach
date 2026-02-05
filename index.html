@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1e3a5f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Boulder Coach">
+    <title>Boulder Coach Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%);
+            color: #fff;
+            overflow-x: hidden;
+            padding-bottom: 70px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(0,0,0,0.4);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            -webkit-tap-highlight-color: rgba(255,255,255,0.1);
+            touch-action: manipulation;
+        }
+
+        .nav-tab.active {
+            color: #4fc3f7;
+        }
+
+        .nav-tab-icon {
+            font-size: 1.8em;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .plan-card {
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.2) 0%, rgba(41, 128, 185, 0.2) 100%);
+            border: 2px solid rgba(79, 195, 247, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: rgba(79, 195, 247, 0.3);
+            touch-action: manipulation;
+        }
+
+        .plan-card:hover, .plan-card:active {
+            transform: translateY(-2px);
+            border-color: rgba(79, 195, 247, 0.6);
+        }
+
+        .plan-card.selected {
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.4) 0%, rgba(41, 128, 185, 0.4) 100%);
+            border-color: #4fc3f7;
+        }
+
+        .plan-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .plan-icon {
+            font-size: 2.5em;
+        }
+
+        .plan-info h3 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .plan-info p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .plan-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .plan-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4fc3f7 0%, #2980b9 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: rgba(255,255,255,0.2);
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .workout-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+        }
+
+        .workout-section.hangboard { border-color: #f39c12; }
+        .workout-section.boulder { border-color: #4fc3f7; }
+        .workout-section.pullups { border-color: #e74c3c; }
+
+        .workout-section h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timer-display {
+            font-size: 4em;
+            font-weight: 700;
+            text-align: center;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .timer-display.warning {
+            color: #f39c12;
+            animation: pulse 1s infinite;
+        }
+
+        .timer-display.danger {
+            color: #e74c3c;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .timer-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timer-btn.start {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+
+        .timer-btn.pause {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .timer-btn.reset {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+        }
+
+        .set-counter {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .counter-label {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4fc3f7;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .counter-btn:active {
+            transform: scale(0.9);
+        }
+
+        .counter-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            background: rgba(0,0,0,0.3);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4fc3f7 0%, #27ae60 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: width 0.5s ease;
+            font-size: 0.9em;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .week-box {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .week-box:hover, .week-box:active {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .week-box.completed {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.3) 0%, rgba(34, 153, 84, 0.3) 100%);
+            border-color: #27ae60;
+        }
+
+        .week-box.current {
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.3) 0%, rgba(41, 128, 185, 0.3) 100%);
+            border-color: #4fc3f7;
+            animation: pulse 2s infinite;
+        }
+
+        .week-number {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .week-label {
+            font-size: 0.75em;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3em;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: #4fc3f7;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.6;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .complete-btn {
+            background: rgba(39, 174, 96, 0.3);
+            border: 2px solid #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .complete-btn:active {
+            transform: scale(0.98);
+        }
+
+        .complete-btn.completed {
+            background: rgba(39, 174, 96, 0.6);
+            cursor: default;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-active {
+            background: #27ae60;
+        }
+
+        .intensity-indicator {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .intensity-dot {
+            width: 30px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
+        .intensity-dot.filled {
+            background: #4fc3f7;
+        }
+
+        .phase-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .phase-base { background: rgba(52, 152, 219, 0.3); border: 1px solid #3498db; }
+        .phase-build { background: rgba(241, 196, 15, 0.3); border: 1px solid #f1c40f; }
+        .phase-peak { background: rgba(231, 76, 60, 0.3); border: 1px solid #e74c3c; }
+        .phase-taper { background: rgba(149, 165, 166, 0.3); border: 1px solid #95a5a6; }
+        .phase-recovery { background: rgba(52, 73, 94, 0.3); border: 1px solid #34495e; }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧗 Boulder Coach Pro</h1>
+        <p class="subtitle">Entrenamiento científico de boulder</p>
+    </div>
+
+    <!-- VISTA: ENTRENAR -->
+    <div id="train" class="view active">
+        <div class="container">
+            <h2 style="margin-bottom: 20px;">Sesión de Hoy</h2>
+
+            <!-- SUSPENSIONES -->
+            <div class="workout-section hangboard">
+                <h3>
+                    <span style="font-size: 1.5em;">⏱️</span>
+                    Suspensiones en Regleta
+                </h3>
+                
+                <div class="info-box">
+                    <h4>Protocolo:</h4>
+                    <ul>
+                        <li>Regleta donde aguantas 40 segundos</li>
+                        <li>Suspensión de 10 segundos</li>
+                        <li>Descanso hasta recuperar</li>
+                        <li>4 series totales</li>
+                    </ul>
+                    <p style="margin-top: 10px; opacity: 0.8; font-size: 0.9em;">
+                        💡 Si vas muy sobrado, añade lastre hasta aguantar ~40seg en tu regleta de trabajo
+                    </p>
+                </div>
+
+                <div class="timer-display" id="hangTimer">10.0</div>
+                
+                <div class="timer-controls">
+                    <button class="timer-btn start" id="hangStart" onclick="startHangTimer()">Iniciar</button>
+                    <button class="timer-btn pause" id="hangPause" onclick="pauseHangTimer()" style="display: none;">Pausar</button>
+                    <button class="timer-btn reset" onclick="resetHangTimer()">Reset</button>
+                </div>
+
+                <div class="set-counter">
+                    <span class="counter-label">Series completadas</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn" onclick="decrementCounter('hang')">−</button>
+                        <span class="counter-value" id="hangSets">0</span>
+                        <button class="counter-btn" onclick="incrementCounter('hang')">+</button>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="hangProgress">0/4</div>
+                </div>
+            </div>
+
+            <!-- BLOQUES MÁXIMOS -->
+            <div class="workout-section boulder">
+                <h3>
+                    <span style="font-size: 1.5em;">🧗</span>
+                    Bloque Máximo
+                </h3>
+                
+                <div class="info-box">
+                    <h4>Protocolo:</h4>
+                    <ul>
+                        <li>Bloque al límite (máximo grado)</li>
+                        <li>3 pegues por bloque</li>
+                        <li>4 bloques diferentes</li>
+                        <li>Descanso completo entre bloques</li>
+                    </ul>
+                </div>
+
+                <div class="set-counter">
+                    <span class="counter-label">Bloques completados</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn" onclick="decrementCounter('maxBoulder')">−</button>
+                        <span class="counter-value" id="maxBoulderSets">0</span>
+                        <button class="counter-btn" onclick="incrementCounter('maxBoulder')">+</button>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="maxBoulderProgress">0/4</div>
+                </div>
+            </div>
+
+            <!-- BLOQUES PROYECTO -->
+            <div class="workout-section boulder">
+                <h3>
+                    <span style="font-size: 1.5em;">🎯</span>
+                    Bloque Proyecto
+                </h3>
+                
+                <div class="info-box">
+                    <h4>Protocolo:</h4>
+                    <ul>
+                        <li>Bloque proyecto (tu objetivo)</li>
+                        <li>3 pegues por bloque</li>
+                        <li>4 bloques diferentes</li>
+                        <li>Enfoque en progresión</li>
+                    </ul>
+                </div>
+
+                <div class="set-counter">
+                    <span class="counter-label">Bloques completados</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn" onclick="decrementCounter('projBoulder')">−</button>
+                        <span class="counter-value" id="projBoulderSets">0</span>
+                        <button class="counter-btn" onclick="incrementCounter('projBoulder')">+</button>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="projBoulderProgress">0/4</div>
+                </div>
+            </div>
+
+            <!-- DOMINADAS EMOM -->
+            <div class="workout-section pullups">
+                <h3>
+                    <span style="font-size: 1.5em;">💪</span>
+                    Dominadas EMOM
+                </h3>
+                
+                <div class="info-box">
+                    <h4>Protocolo:</h4>
+                    <ul>
+                        <li>Calcula 30% de tu máximo (ej: máx 9 → 3 reps)</li>
+                        <li>Dominadas super estrictas + bajada lenta</li>
+                        <li>Cada minuto haces las reps</li>
+                        <li>Descansas lo que queda de minuto</li>
+                        <li>15 rondas totales (15 minutos)</li>
+                    </ul>
+                    <p style="margin-top: 10px; opacity: 0.8; font-size: 0.9em;">
+                        💡 Si es muy fácil, añade lastre. Si no llegas, reduce reps.
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Tu máximo de dominadas:</label>
+                    <input type="number" id="maxPullups" value="9" min="1" onchange="calculatePullupReps()">
+                </div>
+
+                <div class="form-group">
+                    <label>Reps por minuto (30%):</label>
+                    <input type="number" id="pullupsPerMin" value="3" min="1" readonly style="background: rgba(255,255,255,0.05);">
+                </div>
+
+                <div class="timer-display" id="pullupTimer">60</div>
+                
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <span style="font-size: 1.2em; opacity: 0.8;">Ronda <span id="currentRound">0</span>/15</span>
+                </div>
+
+                <div class="timer-controls">
+                    <button class="timer-btn start" id="pullupStart" onclick="startPullupTimer()">Iniciar EMOM</button>
+                    <button class="timer-btn pause" id="pullupPause" onclick="pausePullupTimer()" style="display: none;">Pausar</button>
+                    <button class="timer-btn reset" onclick="resetPullupTimer()">Reset</button>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="pullupProgress">0/15</div>
+                </div>
+            </div>
+
+            <button class="complete-btn" id="completeWorkout" onclick="completeWorkout()">
+                Completar Sesión
+            </button>
+        </div>
+    </div>
+
+    <!-- VISTA: PLANES -->
+    <div id="plans" class="view">
+        <div class="container">
+            <h2 style="margin-bottom: 20px;">Planes de Entrenamiento</h2>
+            
+            <div class="card plan-card" onclick="selectPlan('12weeks')">
+                <div class="plan-header">
+                    <span class="plan-icon">⚡</span>
+                    <div class="plan-info">
+                        <h3>Plan 12 Semanas</h3>
+                        <p>Mejora rápida e intensiva</p>
+                    </div>
+                </div>
+                <div class="plan-details">
+                    <div class="plan-detail-item">
+                        <span>Duración</span>
+                        <span><strong>12 semanas</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Sesiones/semana</span>
+                        <span><strong>3-4</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Objetivo</span>
+                        <span><strong>Subir 1-2 grados</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card plan-card" onclick="selectPlan('16weeks')">
+                <div class="plan-header">
+                    <span class="plan-icon">🎯</span>
+                    <div class="plan-info">
+                        <h3>Plan 4 Meses (16 sem)</h3>
+                        <p>Desarrollo equilibrado</p>
+                    </div>
+                </div>
+                <div class="plan-details">
+                    <div class="plan-detail-item">
+                        <span>Duración</span>
+                        <span><strong>16 semanas</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Sesiones/semana</span>
+                        <span><strong>3-4</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Objetivo</span>
+                        <span><strong>Progresión sólida</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card plan-card" onclick="selectPlan('24weeks')">
+                <div class="plan-header">
+                    <span class="plan-icon">🏆</span>
+                    <div class="plan-info">
+                        <h3>Plan 6 Meses (24 sem)</h3>
+                        <p>Transformación completa</p>
+                    </div>
+                </div>
+                <div class="plan-details">
+                    <div class="plan-detail-item">
+                        <span>Duración</span>
+                        <span><strong>24 semanas</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Sesiones/semana</span>
+                        <span><strong>4-5</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Objetivo</span>
+                        <span><strong>Máximo potencial</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card plan-card" onclick="selectPlan('52weeks')">
+                <div class="plan-header">
+                    <span class="plan-icon">🚀</span>
+                    <div class="plan-info">
+                        <h3>Plan 1 Año (52 sem)</h3>
+                        <p>Periodización completa anual</p>
+                    </div>
+                </div>
+                <div class="plan-details">
+                    <div class="plan-detail-item">
+                        <span>Duración</span>
+                        <span><strong>52 semanas (1 año)</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Sesiones/semana</span>
+                        <span><strong>4-5</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Objetivo</span>
+                        <span><strong>Subir 2-3 grados</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Ciclos</span>
+                        <span><strong>2 macrociclos completos</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card plan-card" onclick="selectPlan('104weeks')">
+                <div class="plan-header">
+                    <span class="plan-icon">👑</span>
+                    <div class="plan-info">
+                        <h3>Plan 2 Años (104 sem)</h3>
+                        <p>Desarrollo profesional</p>
+                    </div>
+                </div>
+                <div class="plan-details">
+                    <div class="plan-detail-item">
+                        <span>Duración</span>
+                        <span><strong>104 semanas (2 años)</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Sesiones/semana</span>
+                        <span><strong>4-6</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Objetivo</span>
+                        <span><strong>Elite / Subir 3-4 grados</strong></span>
+                    </div>
+                    <div class="plan-detail-item">
+                        <span>Ciclos</span>
+                        <span><strong>4 macrociclos + recuperación</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="selectedPlanActions" style="display: none; margin-top: 20px;">
+                <button class="btn" onclick="openModal('startPlanModal')">Comenzar Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA: MI PLAN -->
+    <div id="myplan" class="view">
+        <div class="container">
+            <div id="noPlanMessage" class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <h3>No tienes un plan activo</h3>
+                <p>Ve a Planes para comenzar</p>
+            </div>
+
+            <div id="activePlanContent" style="display: none;">
+                <div class="card">
+                    <h2 id="planTitle"></h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="planProgress">0%</div>
+                    </div>
+                    <p id="planSubtitle" style="opacity: 0.9; margin-top: 10px;"></p>
+                </div>
+
+                <h3 style="margin: 20px 0 15px 0;">Progreso</h3>
+                <div class="week-grid" id="weekGrid"></div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-danger" onclick="abandonPlan()">Abandonar Plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA: ESTADÍSTICAS -->
+    <div id="stats" class="view">
+        <div class="container">
+            <h2 style="margin-bottom: 20px;">Estadísticas</h2>
+            <div id="statsContent"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: INICIAR PLAN -->
+    <div id="startPlanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configurar Plan</h2>
+                <button class="close-btn" onclick="closeModal('startPlanModal')">✕</button>
+            </div>
+            
+            <form id="startPlanForm">
+                <div class="form-group">
+                    <label>Fecha de inicio</label>
+                    <input type="text" id="planStartDate" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Grado actual</label>
+                    <select id="currentGrade" required>
+                        <option value="">Selecciona</option>
+                        <option value="5">5</option>
+                        <option value="6a">6a</option>
+                        <option value="6a+">6a+</option>
+                        <option value="6b">6b</option>
+                        <option value="6b+">6b+</option>
+                        <option value="6c">6c</option>
+                        <option value="6c+">6c+</option>
+                        <option value="7a">7a</option>
+                        <option value="7a+">7a+</option>
+                        <option value="7b">7b</option>
+                        <option value="7b+">7b+</option>
+                        <option value="7c">7c</option>
+                        <option value="7c+">7c+</option>
+                        <option value="8a">8a</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Grado objetivo</label>
+                    <select id="goalGrade" required>
+                        <option value="">Selecciona</option>
+                        <option value="6a">6a</option>
+                        <option value="6a+">6a+</option>
+                        <option value="6b">6b</option>
+                        <option value="6b+">6b+</option>
+                        <option value="6c">6c</option>
+                        <option value="6c+">6c+</option>
+                        <option value="7a">7a</option>
+                        <option value="7a+">7a+</option>
+                        <option value="7b">7b</option>
+                        <option value="7b+">7b+</option>
+                        <option value="7c">7c</option>
+                        <option value="7c+">7c+</option>
+                        <option value="8a">8a</option>
+                        <option value="8a+">8a+</option>
+                        <option value="8b">8b</option>
+                        <option value="8b+">8b+</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Sesiones por semana</label>
+                    <select id="sessionsPerWeek" required>
+                        <option value="3">3 sesiones</option>
+                        <option value="4" selected>4 sesiones</option>
+                        <option value="5">5 sesiones</option>
+                        <option value="6">6 sesiones</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn">Iniciar Plan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALLES DE SEMANA -->
+    <div id="weekDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="weekDetailsTitle">Detalles de la Semana</h2>
+                <button class="close-btn" onclick="closeModal('weekDetailsModal')">✕</button>
+            </div>
+            
+            <div id="weekDetailsContent"></div>
+        </div>
+    </div>
+
+    <!-- NAVEGACIÓN -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchView('train')">
+            <span class="nav-tab-icon">💪</span>
+            <span>Entrenar</span>
+        </button>
+        <button class="nav-tab" onclick="switchView('plans')">
+            <span class="nav-tab-icon">📋</span>
+            <span>Planes</span>
+        </button>
+        <button class="nav-tab" onclick="switchView('myplan')">
+            <span class="nav-tab-icon">🎯</span>
+            <span>Mi Plan</span>
+        </button>
+        <button class="nav-tab" onclick="switchView('stats')">
+            <span class="nav-tab-icon">📊</span>
+            <span>Stats</span>
+        </button>
+    </div>
+
+    <script>
+        // Variables globales
+        let hangInterval = null;
+        let hangTime = 10.0;
+        let hangRunning = false;
+
+        let pullupInterval = null;
+        let pullupTime = 60;
+        let pullupRunning = false;
+        let currentRound = 0;
+
+        let counters = {
+            hang: 0,
+            maxBoulder: 0,
+            projBoulder: 0
+        };
+
+        let selectedPlanType = null;
+        let activePlan = JSON.parse(localStorage.getItem('boulderActivePlan')) || null;
+        let completedSessions = JSON.parse(localStorage.getItem('boulderSessions')) || [];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('planStartDate').value = `${year}-${month}-${day}`;
+            
+            calculatePullupReps();
+            loadSessionState();
+            
+            if (activePlan) {
+                updateActivePlanView();
+            }
+
+            updateStats();
+        });
+
+        // TIMER SUSPENSIONES
+        function startHangTimer() {
+            if (hangRunning) return;
+            hangRunning = true;
+            document.getElementById('hangStart').style.display = 'none';
+            document.getElementById('hangPause').style.display = 'block';
+
+            hangInterval = setInterval(() => {
+                hangTime -= 0.1;
+                if (hangTime <= 0) {
+                    hangTime = 0;
+                    pauseHangTimer();
+                    playBeep();
+                    setTimeout(() => {
+                        if (confirm('¡Tiempo! ¿Serie completada?')) {
+                            incrementCounter('hang');
+                        }
+                        resetHangTimer();
+                    }, 100);
+                }
+                
+                const display = document.getElementById('hangTimer');
+                display.textContent = hangTime.toFixed(1);
+                
+                if (hangTime <= 3 && hangTime > 0) {
+                    display.classList.add('danger');
+                } else if (hangTime <= 5) {
+                    display.classList.add('warning');
+                } else {
+                    display.classList.remove('warning', 'danger');
+                }
+            }, 100);
+        }
+
+        function pauseHangTimer() {
+            hangRunning = false;
+            clearInterval(hangInterval);
+            document.getElementById('hangStart').style.display = 'block';
+            document.getElementById('hangPause').style.display = 'none';
+        }
+
+        function resetHangTimer() {
+            pauseHangTimer();
+            hangTime = 10.0;
+            document.getElementById('hangTimer').textContent = '10.0';
+            document.getElementById('hangTimer').classList.remove('warning', 'danger');
+        }
+
+        // TIMER DOMINADAS EMOM
+        function calculatePullupReps() {
+            const max = parseInt(document.getElementById('maxPullups').value);
+            const reps = Math.max(1, Math.floor(max * 0.3));
+            document.getElementById('pullupsPerMin').value = reps;
+        }
+
+        function startPullupTimer() {
+            if (pullupRunning) return;
+            pullupRunning = true;
+            currentRound = 0;
+            pullupTime = 60;
+            
+            document.getElementById('pullupStart').style.display = 'none';
+            document.getElementById('pullupPause').style.display = 'block';
+
+            pullupInterval = setInterval(() => {
+                pullupTime--;
+                
+                if (pullupTime <= 0) {
+                    currentRound++;
+                    document.getElementById('currentRound').textContent = currentRound;
+                    updatePullupProgress();
+                    
+                    if (currentRound >= 15) {
+                        pausePullupTimer();
+                        playBeep();
+                        alert('🎉 ¡EMOM completado! 15 rondas finalizadas');
+                        return;
+                    }
+                    
+                    pullupTime = 60;
+                    playBeep();
+                }
+                
+                const display = document.getElementById('pullupTimer');
+                display.textContent = pullupTime;
+                
+                if (pullupTime <= 10) {
+                    display.classList.add('warning');
+                } else {
+                    display.classList.remove('warning');
+                }
+            }, 1000);
+        }
+
+        function pausePullupTimer() {
+            pullupRunning = false;
+            clearInterval(pullupInterval);
+            document.getElementById('pullupStart').style.display = 'block';
+            document.getElementById('pullupPause').style.display = 'none';
+        }
+
+        function resetPullupTimer() {
+            pausePullupTimer();
+            pullupTime = 60;
+            currentRound = 0;
+            document.getElementById('pullupTimer').textContent = '60';
+            document.getElementById('currentRound').textContent = '0';
+            document.getElementById('pullupTimer').classList.remove('warning');
+            updatePullupProgress();
+        }
+
+        function updatePullupProgress() {
+            const percentage = (currentRound / 15) * 100;
+            const fill = document.getElementById('pullupProgress');
+            fill.style.width = percentage + '%';
+            fill.textContent = `${currentRound}/15`;
+        }
+
+        // CONTADORES
+        function incrementCounter(type) {
+            const max = 4;
+            if (counters[type] < max) {
+                counters[type]++;
+                updateCounter(type);
+                saveSessionState();
+            }
+        }
+
+        function decrementCounter(type) {
+            if (counters[type] > 0) {
+                counters[type]--;
+                updateCounter(type);
+                saveSessionState();
+            }
+        }
+
+        function updateCounter(type) {
+            document.getElementById(type + 'Sets').textContent = counters[type];
+            const max = 4;
+            const percentage = (counters[type] / max) * 100;
+            const fill = document.getElementById(type + 'Progress');
+            fill.style.width = percentage + '%';
+            fill.textContent = `${counters[type]}/${max}`;
+        }
+
+        function saveSessionState() {
+            localStorage.setItem('currentSession', JSON.stringify({
+                counters: counters,
+                date: new Date().toISOString().split('T')[0]
+            }));
+        }
+
+        function loadSessionState() {
+            const saved = localStorage.getItem('currentSession');
+            if (saved) {
+                const data = JSON.parse(saved);
+                const today = new Date().toISOString().split('T')[0];
+                
+                if (data.date === today) {
+                    counters = data.counters;
+                    updateCounter('hang');
+                    updateCounter('maxBoulder');
+                    updateCounter('projBoulder');
+                }
+            }
+        }
+
+        function completeWorkout() {
+            const session = {
+                date: new Date().toISOString(),
+                hangSets: counters.hang,
+                maxBoulders: counters.maxBoulder,
+                projBoulders: counters.projBoulder,
+                emomRounds: currentRound
+            };
+
+            completedSessions.push(session);
+            localStorage.setItem('boulderSessions', JSON.stringify(completedSessions));
+            
+            // Reset counters
+            counters = { hang: 0, maxBoulder: 0, projBoulder: 0 };
+            currentRound = 0;
+            localStorage.removeItem('currentSession');
+            
+            updateCounter('hang');
+            updateCounter('maxBoulder');
+            updateCounter('projBoulder');
+            resetHangTimer();
+            resetPullupTimer();
+
+            // Update plan progress
+            if (activePlan) {
+                const weeksPassed = Math.floor(completedSessions.length / parseInt(activePlan.sessionsPerWeek || 4));
+                activePlan.currentWeek = Math.min(weeksPassed + 1, activePlan.totalWeeks);
+                localStorage.setItem('boulderActivePlan', JSON.stringify(activePlan));
+            }
+
+            alert('🎉 ¡Sesión completada y guardada!');
+            updateStats();
+        }
+
+        function playBeep() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // PLANES
+        function selectPlan(planType) {
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            selectedPlanType = planType;
+            document.getElementById('selectedPlanActions').style.display = 'block';
+        }
+
+        document.getElementById('startPlanForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const weeksMap = { 
+                '12weeks': 12, 
+                '16weeks': 16, 
+                '24weeks': 24,
+                '52weeks': 52,
+                '104weeks': 104
+            };
+            
+            activePlan = {
+                type: selectedPlanType,
+                totalWeeks: weeksMap[selectedPlanType],
+                startDate: document.getElementById('planStartDate').value,
+                currentGrade: document.getElementById('currentGrade').value,
+                goalGrade: document.getElementById('goalGrade').value,
+                sessionsPerWeek: document.getElementById('sessionsPerWeek').value,
+                currentWeek: 1,
+                createdAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('boulderActivePlan', JSON.stringify(activePlan));
+            closeModal('startPlanModal');
+            switchView('myplan');
+            updateActivePlanView();
+            alert('🎉 ¡Plan iniciado!');
+        });
+
+        function updateActivePlanView() {
+            if (!activePlan) {
+                document.getElementById('noPlanMessage').style.display = 'block';
+                document.getElementById('activePlanContent').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('noPlanMessage').style.display = 'none';
+            document.getElementById('activePlanContent').style.display = 'block';
+
+            const planNames = {
+                '12weeks': 'Plan 12 Semanas',
+                '16weeks': 'Plan 4 Meses',
+                '24weeks': 'Plan 6 Meses',
+                '52weeks': 'Plan 1 Año',
+                '104weeks': 'Plan 2 Años'
+            };
+
+            document.getElementById('planTitle').textContent = planNames[activePlan.type];
+            
+            const progress = Math.round(((activePlan.currentWeek - 1) / activePlan.totalWeeks) * 100);
+            
+            document.getElementById('planProgress').style.width = progress + '%';
+            document.getElementById('planProgress').textContent = progress + '%';
+            document.getElementById('planSubtitle').textContent = 
+                `Semana ${activePlan.currentWeek} de ${activePlan.totalWeeks} • ${activePlan.currentGrade} → ${activePlan.goalGrade}`;
+
+            // Week grid
+            const weekGrid = document.getElementById('weekGrid');
+            weekGrid.innerHTML = Array.from({length: activePlan.totalWeeks}, (_, i) => {
+                const weekNum = i + 1;
+                let className = 'week-box';
+                if (weekNum < activePlan.currentWeek) className += ' completed';
+                if (weekNum === activePlan.currentWeek) className += ' current';
+                
+                return `
+                    <div class="${className}" onclick="viewWeekDetails(${weekNum})">
+                        <div class="week-number">${weekNum}</div>
+                        <div class="week-label">Sem ${weekNum}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewWeekDetails(weekNum) {
+            if (!activePlan) return;
+            
+            const phase = getPhaseForWeek(weekNum, activePlan.totalWeeks);
+            const focus = getFocusForWeek(weekNum, phase, activePlan.totalWeeks);
+            const intensity = getIntensityForWeek(weekNum, phase, activePlan.totalWeeks);
+            
+            const hangWork = getSuspensionWork(weekNum, phase, intensity, activePlan.totalWeeks);
+            const maxBoulderWork = getMaxBoulderWork(weekNum, phase, intensity, activePlan.totalWeeks);
+            const projectWork = getProjectWork(weekNum, phase, intensity, activePlan.totalWeeks);
+            const pullupsWork = getPullupsWork(weekNum, phase, intensity, activePlan.totalWeeks);
+            const tips = getWeekTips(weekNum, phase, intensity, activePlan.totalWeeks);
+            
+            const modalContent = `
+                <div class="card">
+                    <div class="phase-badge phase-${phase.toLowerCase()}">${phase}</div>
+                    <h3>Semana ${weekNum} de ${activePlan.totalWeeks}</h3>
+                    <p style="opacity: 0.9; margin-top: 10px;">${focus}</p>
+                    <div class="intensity-indicator" style="margin-top: 15px;">
+                        <span style="font-size: 0.85em; margin-right: 10px;">Intensidad:</span>
+                        ${Array(5).fill(0).map((_, i) => 
+                            `<div class="intensity-dot ${i < intensity ? 'filled' : ''}"></div>`
+                        ).join('')}
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>📋 Protocolo de la Semana</h4>
+                    <p style="margin-bottom: 10px;">Realiza ${activePlan.sessionsPerWeek} sesiones esta semana:</p>
+                </div>
+
+                <div class="workout-section hangboard">
+                    <h3>⏱️ Suspensiones</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 5px 0;">• ${hangWork}</li>
+                        <li style="padding: 5px 0;">• 4 series de 10 segundos</li>
+                        <li style="padding: 5px 0;">• Descanso completo entre series</li>
+                    </ul>
+                </div>
+
+                <div class="workout-section boulder">
+                    <h3>🧗 Bloques</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 5px 0;">• <strong>Bloques Máximos:</strong> ${maxBoulderWork}</li>
+                        <li style="padding: 5px 0;">• <strong>Bloques Proyecto:</strong> ${projectWork}</li>
+                        <li style="padding: 5px 0;">• 3 pegues por bloque</li>
+                        <li style="padding: 5px 0;">• Descanso de 3-5 min entre bloques</li>
+                    </ul>
+                </div>
+
+                <div class="workout-section pullups">
+                    <h3>💪 Dominadas EMOM</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 5px 0;">• ${pullupsWork}</li>
+                        <li style="padding: 5px 0;">• Técnica perfecta + bajada lenta</li>
+                        <li style="padding: 5px 0;">• Cada minuto durante 15 minutos</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h4>💡 Consejos para esta semana</h4>
+                    <ul>
+                        ${tips}
+                    </ul>
+                </div>
+            `;
+            
+            document.getElementById('weekDetailsContent').innerHTML = modalContent;
+            openModal('weekDetailsModal');
+        }
+
+        function getPhaseForWeek(weekNum, totalWeeks) {
+            const cycleLength = totalWeeks <= 24 ? totalWeeks : 26; // 26-week cycles for long plans
+            const weekInCycle = ((weekNum - 1) % cycleLength) + 1;
+            
+            if (totalWeeks === 12) {
+                if (weekInCycle <= 4) return 'Base';
+                if (weekInCycle <= 8) return 'Build';
+                if (weekInCycle <= 11) return 'Peak';
+                return 'Taper';
+            } else if (totalWeeks === 16) {
+                if (weekInCycle <= 6) return 'Base';
+                if (weekInCycle <= 11) return 'Build';
+                if (weekInCycle <= 15) return 'Peak';
+                return 'Taper';
+            } else if (totalWeeks === 24) {
+                if (weekInCycle <= 8) return 'Base';
+                if (weekInCycle <= 16) return 'Build';
+                if (weekInCycle <= 22) return 'Peak';
+                return 'Taper';
+            } else if (totalWeeks === 52) {
+                // 2 cycles of 26 weeks
+                if (weekInCycle <= 8) return 'Base';
+                if (weekInCycle <= 16) return 'Build';
+                if (weekInCycle <= 23) return 'Peak';
+                if (weekInCycle <= 25) return 'Taper';
+                return 'Recovery';
+            } else { // 104 weeks
+                // 4 cycles of 26 weeks
+                if (weekInCycle <= 8) return 'Base';
+                if (weekInCycle <= 16) return 'Build';
+                if (weekInCycle <= 23) return 'Peak';
+                if (weekInCycle <= 25) return 'Taper';
+                return 'Recovery';
+            }
+        }
+
+        function getFocusForWeek(weekNum, phase, totalWeeks) {
+            const cycleNum = Math.floor((weekNum - 1) / 26) + 1;
+            const weekInPhase = weekNum % 4 || 4;
+            
+            const focuses = {
+                'Base': [
+                    'Técnica fundamental - Movimientos precisos',
+                    'Volumen moderado - Construye resistencia',
+                    'Acondicionamiento - Prepara el cuerpo',
+                    'Perfeccionamiento técnico - Consolida bases'
+                ],
+                'Build': [
+                    'Fuerza específica - Incrementa carga',
+                    'Potencia de dedos - Suspensiones intensas',
+                    'Bloques de tu nivel - Aumenta volumen de calidad',
+                    'Resistencia de fuerza - Mantén la intensidad'
+                ],
+                'Peak': [
+                    'Máxima intensidad - Límite absoluto',
+                    'Proyectos duros - Tus objetivos',
+                    'Potencia explosiva - Dynos y movimientos dinámicos',
+                    'Rendimiento óptimo - Da tu mejor versión'
+                ],
+                'Taper': [
+                    'Reducción de volumen - Mantén intensidad',
+                    'Recuperación activa - Supercompensación'
+                ],
+                'Recovery': [
+                    'Descanso activo - Movimiento suave',
+                    'Regeneración completa - Prepara nuevo ciclo'
+                ]
+            };
+            
+            const phaseOptions = focuses[phase];
+            return phaseOptions[(weekNum - 1) % phaseOptions.length];
+        }
+
+        function getIntensityForWeek(weekNum, phase, totalWeeks) {
+            const weekInPhase = weekNum % 4 || 4;
+            
+            if (phase === 'Base') {
+                return Math.min(3, 2 + Math.floor(weekInPhase / 2));
+            } else if (phase === 'Build') {
+                return Math.min(4, 3 + Math.floor(weekInPhase / 3));
+            } else if (phase === 'Peak') {
+                return 5;
+            } else if (phase === 'Taper') {
+                return 2;
+            } else {
+                return 1;
+            }
+        }
+
+        function getSuspensionWork(weekNum, phase, intensity, totalWeeks) {
+            const workloads = {
+                'Base': [
+                    'Regleta donde aguantas 45 segundos (sin lastre)',
+                    'Regleta donde aguantas 40 segundos',
+                    'Regleta + 2kg donde aguantas 40 segundos',
+                    'Regleta + 5kg donde aguantas 40 segundos'
+                ],
+                'Build': [
+                    'Regleta + 5kg donde aguantas 35-40 segundos',
+                    'Regleta + 7kg donde aguantas 35 segundos',
+                    'Regleta + 10kg donde aguantas 35 segundos',
+                    'Regleta + 12kg donde aguantas 30-35 segundos'
+                ],
+                'Peak': [
+                    'Máxima intensidad: Regleta + 15kg (30 seg)',
+                    'Máximo lastre posible manteniendo técnica',
+                    'Regleta más difícil con lastre moderado',
+                    'Combinación: regletas duras + lastre'
+                ],
+                'Taper': [
+                    'Suspensiones suaves de 40+ segundos',
+                    'Regleta fácil, sin lastre, técnica perfecta'
+                ],
+                'Recovery': [
+                    'Suspensiones muy ligeras, 50+ segundos',
+                    'Regletas grandes, movimiento activo'
+                ]
+            };
+            
+            const options = workloads[phase];
+            return options[Math.min((weekNum - 1) % options.length, options.length - 1)];
+        }
+
+        function getMaxBoulderWork(weekNum, phase, intensity, totalWeeks) {
+            const workloads = {
+                'Base': [
+                    '4 bloques a tu nivel -2 (técnica)',
+                    '4 bloques a tu nivel -1',
+                    '3 bloques nivel -1 + 1 bloque nivel actual',
+                    '4 bloques a tu nivel actual'
+                ],
+                'Build': [
+                    '4 bloques a tu nivel actual',
+                    '3 bloques nivel actual + 1 bloque nivel +1',
+                    '2 bloques nivel actual + 2 bloques nivel +1',
+                    '4 bloques intentando nivel +1'
+                ],
+                'Peak': [
+                    '4 intentos al máximo nivel posible',
+                    '3 bloques límite + 1 proyecto extremo',
+                    'Solo bloques que te cuestan: nivel máximo',
+                    'Full send: tus proyectos más duros'
+                ],
+                'Taper': [
+                    '2-3 bloques técnicos (nivel -1)',
+                    '2 bloques suaves, calidad de movimiento'
+                ],
+                'Recovery': [
+                    '2 bloques muy fáciles (nivel -3)',
+                    'Solo movimiento activo, nada duro'
+                ]
+            };
+            
+            const options = workloads[phase];
+            return options[Math.min((weekNum - 1) % options.length, options.length - 1)];
+        }
+
+        function getProjectWork(weekNum, phase, intensity, totalWeeks) {
+            const workloads = {
+                'Base': [
+                    '4 bloques trabajando footwork',
+                    '4 bloques enfoque en balance',
+                    '4 bloques practicando heel hooks',
+                    '4 bloques trabajando compression'
+                ],
+                'Build': [
+                    '4 bloques que casi puedes hacer',
+                    '4 intentos en proyectos realistas',
+                    '3 proyectos + 1 bloque muy duro',
+                    '4 bloques progresando en secuencias'
+                ],
+                'Peak': [
+                    '4 intentos en TU proyecto principal',
+                    'Máximo 3 intentos en proyecto + warm-up',
+                    'Solo tu proyecto más duro: 4 tries',
+                    'Proyecto objetivo: máximo esfuerzo'
+                ],
+                'Taper': [
+                    '2-3 bloques de mantenimiento',
+                    'Movimientos conocidos, sin stress'
+                ],
+                'Recovery': [
+                    '2 bloques muy fáciles de técnica',
+                    'Solo movilidad y movimiento suave'
+                ]
+            };
+            
+            const options = workloads[phase];
+            return options[Math.min((weekNum - 1) % options.length, options.length - 1)];
+        }
+
+        function getPullupsWork(weekNum, phase, intensity, totalWeeks) {
+            const workloads = {
+                'Base': [
+                    '30% de tu máximo (peso corporal)',
+                    '30% máximo + chaleco 2-3kg',
+                    '30% máximo + chaleco 5kg',
+                    '30% máximo + cinturón 5kg'
+                ],
+                'Build': [
+                    '30% máximo + 7-10kg de lastre',
+                    '30% máximo + 10-12kg',
+                    '30% máximo + 12-15kg',
+                    '30% máximo + máximo lastre controlable'
+                ],
+                'Peak': [
+                    '30% máximo + 15-20kg (máxima calidad)',
+                    '25% máximo + máximo lastre posible',
+                    'Variante: 40% máximo sin lastre (explosivo)',
+                    'Mix: algunas con lastre máximo, otras explosivas'
+                ],
+                'Taper': [
+                    '20-25% de tu máximo (recuperación)',
+                    '20% máximo, peso corporal, muy controlado'
+                ],
+                'Recovery': [
+                    '15-20% máximo, solo movilidad',
+                    'Dominadas asistidas o negativas suaves'
+                ]
+            };
+            
+            const options = workloads[phase];
+            return options[Math.min((weekNum - 1) % options.length, options.length - 1)];
+        }
+
+        function getWeekTips(weekNum, phase, intensity, totalWeeks) {
+            const tips = {
+                'Base': [
+                    '<li>Prioriza técnica perfecta sobre fuerza bruta</li><li>Come bien: 2g proteína/kg peso corporal</li><li>Duerme 8+ horas cada noche</li>',
+                    '<li>Graba tus sesiones para analizar técnica</li><li>Movilidad de hombros antes de cada sesión</li><li>Hidratación constante durante el día</li>',
+                    '<li>Foam roller después de entrenar</li><li>Trabaja antagonistas: push-ups, face pulls</li><li>Recuperación activa en días libres</li>',
+                    '<li>Evalúa tu progreso: ¿mejora la técnica?</li><li>Aumenta ingesta calórica si es necesario</li><li>Stretching dinámico pre-entreno</li>'
+                ],
+                'Build': [
+                    '<li>Intensidad sube: cuidado con tendones</li><li>Calienta 20-30 minutos antes de cargar</li><li>Suplementa con creatina si quieres</li>',
+                    '<li>Descansa 48h entre sesiones intensas</li><li>Come carbohidratos pre-entreno (1-2h antes)</li><li>Masaje o fisio si hay molestias</li>',
+                    '<li>Duerme 8-9 horas: recovery es clave</li><li>Escucha tu cuerpo: ajusta si duele</li><li>Proteína post-entreno (30min ventana)</li>',
+                    '<li>Pico de intensidad: máximo cuidado</li><li>No entrenes si algo duele de verdad</li><li>Hielo después si inflamación</li>'
+                ],
+                'Peak': [
+                    '<li>🔥 Semana de máxima: todo o nada</li><li>Calentamiento extra largo: 30-40min</li><li>Nutrición perfecta: timing de comidas</li>',
+                    '<li>Mental fuerte: visualiza el éxito</li><li>Técnica impecable incluso al límite</li><li>Hidratación óptima: 3-4L agua/día</li>',
+                    '<li>Cafeína estratégica pre-sesión si ayuda</li><li>Recovery activo: yoga, estiramientos</li><li>Controla el ego: lesión=game over</li>',
+                    '<li>Semana final del peak: máximo cuidado</li><li>Si completas objetivo: celebra!</li><li>Si no: lo conseguirás siguiente ciclo</li>'
+                ],
+                'Taper': [
+                    '<li>Reduce volumen 50-60%, mantén intensidad</li><li>Duerme TODO lo posible</li><li>Mentalízate: has entrenado duro</li>',
+                    '<li>Taper = supercompensación</li><li>Confía en el proceso</li><li>Prepárate para nuevo ciclo</li>'
+                ],
+                'Recovery': [
+                    '<li>Semana de descanso activo total</li><li>Yoga, natación, caminatas</li><li>Reflexiona: ¿qué mejoró? ¿qué ajustar?</li>',
+                    '<li>Disfruta sin presión</li><li>Come bien, descansa bien</li><li>Reset mental para nuevo macrociclo</li>'
+                ]
+            };
+            
+            const phaseOptions = tips[phase];
+            return phaseOptions[Math.min((weekNum - 1) % phaseOptions.length, phaseOptions.length - 1)];
+        }
+
+        function abandonPlan() {
+            if (confirm('¿Abandonar el plan actual?')) {
+                localStorage.removeItem('boulderActivePlan');
+                activePlan = null;
+                switchView('plans');
+            }
+        }
+
+        // ESTADÍSTICAS
+        function updateStats() {
+            const totalSessions = completedSessions.length;
+            const totalHangSets = completedSessions.reduce((sum, s) => sum + (s.hangSets || 0), 0);
+            const totalBoulders = completedSessions.reduce((sum, s) => sum + (s.maxBoulders || 0) + (s.projBoulders || 0), 0);
+            const totalEmomRounds = completedSessions.reduce((sum, s) => sum + (s.emomRounds || 0), 0);
+
+            document.getElementById('statsContent').innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">${totalSessions}</div>
+                        <div class="stat-label">Sesiones Totales</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${totalHangSets}</div>
+                        <div class="stat-label">Series Suspensiones</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${totalBoulders}</div>
+                        <div class="stat-label">Bloques Completados</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${totalEmomRounds}</div>
+                        <div class="stat-label">Rondas EMOM</div>
+                    </div>
+                </div>
+
+                ${activePlan ? `
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">Progreso del Plan</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 2em; font-weight: 700;">${activePlan.currentGrade}</div>
+                            <div style="opacity: 0.7;">Inicial</div>
+                        </div>
+                        <div style="font-size: 2em;">→</div>
+                        <div>
+                            <div style="font-size: 2em; font-weight: 700; color: #27ae60;">${activePlan.goalGrade}</div>
+                            <div style="opacity: 0.7;">Objetivo</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <p>Semana ${activePlan.currentWeek} de ${activePlan.totalWeeks}</p>
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">Últimas 5 Sesiones</h3>
+                    ${completedSessions.slice(-5).reverse().map(s => `
+                        <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <div style="font-size: 0.9em; opacity: 0.8;">${new Date(s.date).toLocaleDateString('es-ES')}</div>
+                            <div style="margin-top: 5px;">
+                                Suspensiones: ${s.hangSets}/4 • Bloques: ${s.maxBoulders + s.projBoulders}/8 • EMOM: ${s.emomRounds}/15
+                            </div>
+                        </div>
+                    `).join('') || '<p style="opacity: 0.6;">No hay sesiones aún</p>'}
+                </div>
+            `;
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            event.target.closest('.nav-tab').classList.add('active');
+
+            if (viewId === 'myplan') updateActivePlanView();
+            if (viewId === 'stats') updateStats();
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+    </script>
+</body>
+</html>
